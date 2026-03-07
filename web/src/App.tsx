@@ -4,7 +4,12 @@ import { PredefinedSelector } from "./components/PredefinedSelector";
 import { downloadBatch, downloadSingle, fetchPredefined } from "./services/api";
 import { saveBlob } from "./services/download";
 import type { LabelInput, PredefinedLabel } from "./types/label";
-import { BUILD_TIME_ISO } from "./buildInfo";
+import { BUILD_ID, BUILD_TIME_ISO } from "./buildInfo";
+
+interface BackendVersion {
+  serverStartedAt: string;
+  generatorModifiedAt: string;
+}
 
 function slugifyTitle(value: string): string {
   return value
@@ -19,6 +24,7 @@ export function App() {
   const [labels, setLabels] = useState<PredefinedLabel[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [backendVersion, setBackendVersion] = useState<BackendVersion | null>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -32,6 +38,24 @@ export function App() {
     };
 
     run();
+  }, []);
+
+  useEffect(() => {
+    const loadVersion = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/api/version");
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as BackendVersion;
+        setBackendVersion(data);
+      } catch {
+        setBackendVersion(null);
+      }
+    };
+
+    loadVersion();
   }, []);
 
   const defaultSvg = labels[0]?.iconSvg ?? "";
@@ -59,7 +83,11 @@ export function App() {
       <header>
         <h1>Gridfinity Label Generator</h1>
         <p>Embossed text height: 0.4 mm • Usable area: 34.5 × 10.5 mm</p>
-        <p>Build: {buildTime}</p>
+        <p>Frontend Build: {BUILD_ID} • {buildTime}</p>
+        <p>
+          Backend: {backendVersion ? new Date(backendVersion.serverStartedAt).toLocaleString() : "not reachable"}
+          {backendVersion ? ` • generator.ts: ${new Date(backendVersion.generatorModifiedAt).toLocaleString()}` : ""}
+        </p>
       </header>
 
       {loading ? <p>Loading predefined labels...</p> : null}

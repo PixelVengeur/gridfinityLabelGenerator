@@ -10,8 +10,6 @@ import { ExtrudeGeometry } from "three";
 import type { LabelInput } from "../types.js";
 
 const EMBOSS_HEIGHT = 0.4;
-const BASE_X = 0;
-const BASE_Y = 0;
 
 const SVG_BOX = {
   x1: 1.5,
@@ -34,6 +32,8 @@ const TEXT_BOTTOM_BOX = {
   y2: 4.75
 };
 
+type Rect = { x1: number; y1: number; x2: number; y2: number };
+
 const material = new MeshNormalMaterial();
 const stlLoader = new STLLoader();
 const svgLoader = new SVGLoader();
@@ -49,6 +49,9 @@ const baseGeometry = stlLoader.parse(baseStlBuffer.buffer.slice(baseStlBuffer.by
 baseGeometry.computeBoundingBox();
 const baseBounds = baseGeometry.boundingBox ?? new Box3();
 const topZ = baseBounds.max.z;
+
+const CONTENT_ORIGIN_X = baseBounds.min.x + 1.5;
+const CONTENT_ORIGIN_Y = baseBounds.min.y + 0.5;
 
 const fontJsonPath = path.resolve(process.cwd(), "node_modules", "three", "examples", "fonts", "helvetiker_regular.typeface.json");
 const fontJson = JSON.parse(fs.readFileSync(fontJsonPath, "utf8"));
@@ -83,10 +86,24 @@ function getTextBounds(text: string, size: number): Box3 | null {
   return geometry.boundingBox;
 }
 
-function getBoxSize(box: { x1: number; y1: number; x2: number; y2: number }): { width: number; height: number } {
+function getMeshBounds(mesh: Mesh): Box3 {
+  mesh.updateMatrixWorld(true);
+  return new Box3().setFromObject(mesh);
+}
+
+function getBoxSize(box: Rect): { width: number; height: number } {
   return {
     width: box.x2 - box.x1,
     height: box.y2 - box.y1
+  };
+}
+
+function toWorldBox(box: Rect): Rect {
+  return {
+    x1: CONTENT_ORIGIN_X + box.x1,
+    y1: CONTENT_ORIGIN_Y + box.y1,
+    x2: CONTENT_ORIGIN_X + box.x2,
+    y2: CONTENT_ORIGIN_Y + box.y2
   };
 }
 
@@ -103,32 +120,25 @@ function buildIconMesh(iconSvg: string): Mesh {
     throw new Error("Invalid icon SVG");
   }
 
-  const icon2D = new ShapeGeometry(shapes);
-  icon2D.computeBoundingBox();
-  const box = icon2D.boundingBox;
-  if (!box) {
-    throw new Error("Invalid icon SVG bounds");
-  }
-
-  const sourceWidth = box.max.x - box.min.x;
-  const sourceHeight = box.max.y - box.min.y;
+  const extruded = toExtrudedMesh(shapes, EMBOSS_HEIGHT);
+  const sourceBounds = getMeshBounds(extruded);
+  const sourceWidth = sourceBounds.max.x - sourceBounds.min.x;
+  const sourceHeight = sourceBounds.max.y - sourceBounds.min.y;
   if (sourceWidth <= 0 || sourceHeight <= 0) {
     throw new Error("Invalid icon SVG bounds");
   }
 
-  const svgBoxSize = getBoxSize(SVG_BOX);
-  const scale = Math.min(svgBoxSize.width / sourceWidth, svgBoxSize.height / sourceHeight);
+  const target = toWorldBox(SVG_BOX);
+  const targetSize = getBoxSize(target);
+  const scale = Math.min(targetSize.width / sourceWidth, targetSize.height / sourceHeight);
 
-  const extruded = toExtrudedMesh(shapes, EMBOSS_HEIGHT);
   extruded.scale.set(scale, scale, 1);
 
-  const scaledWidth = sourceWidth * scale;
-  const scaledHeight = sourceHeight * scale;
-
-  const iconBoxX = BASE_X + SVG_BOX.x1;
-  const iconBoxY = BASE_Y + SVG_BOX.y1;
-  const tx = iconBoxX + ((svgBoxSize.width - scaledWidth) / 2) - (box.min.x * scale);
-  const ty = iconBoxY + ((svgBoxSize.height - scaledHeight) / 2) - (box.min.y * scale);
+  const scaledBounds = getMeshBounds(extruded);
+  const scaledWidth = scaledBounds.max.x - scaledBounds.min.x;
+  const scaledHeight = scaledBounds.max.y - scaledBounds.min.y;
+  const tx = target.x1 + ((targetSize.width - scaledWidth) / 2) - scaledBounds.min.x;
+  const ty = target.y1 + ((targetSize.height - scaledHeight) / 2) - scaledBounds.min.y;
 
   extruded.position.set(tx, ty, topZ);
   return extruded;
@@ -161,29 +171,41 @@ function createTextLineMesh(text: string, size: number, x: number, y: number, wi
     return null;
   }
 
-  const text2D = new ShapeGeometry(shapes);
-  text2D.computeBoundingBox();
-  const box = text2D.boundingBox;
-  if (!box) {
+  const geometry = new ExtrudeGeometry(shapes, {
+    depth: EMBOSS_HEIGHT,
+    bevelEnabled: false,
+    curveSegments: 10
+  });
+  geometry.computeBoundingBox();
+  const bounds = geometry.boundingBox;
+  if (!bounds) {
     return null;
   }
 
-  const textWidth = box.max.x - box.min.x;
-  const textHeight = box.max.y - box.min.y;
-  if (textWidth > width || textHeight > height) {
+  const textWidth = bounds.max.x - bounds.min.x;
+  const textHeight = bounds.max.y - bounds.min.y;
+  if (textWidth <= 0 || textHeight <= 0) {
     return null;
   }
 
-  const mesh = toExtrudedMesh(shapes, EMBOSS_HEIGHT);
-  const tx = x - box.min.x;
-  const ty = y + ((height - textHeight) / 2) - box.min.y;
+  const scale = Math.min(1, width / textWidth, height / textHeight);
+  const scaledWidth = textWidth * scale;
+  const scaledHeight = textHeight * scale;
+
+  const mesh = new Mesh(geometry, material);
+  mesh.scale.set(scale, scale, 1);
+
+  const tx = x + ((width - scaledWidth) / 2) - (bounds.min.x * scale);
+  const ty = y + ((height - scaledHeight) / 2) - (bounds.min.y * scale);
   mesh.position.set(tx, ty, topZ);
   return mesh;
 }
 
 function buildTextMeshes(label: LabelInput): Mesh[] {
-  const topSize = getBoxSize(TEXT_TOP_BOX);
-  const bottomSize = getBoxSize(TEXT_BOTTOM_BOX);
+  const topBox = toWorldBox(TEXT_TOP_BOX);
+  const bottomBox = toWorldBox(TEXT_BOTTOM_BOX);
+  const topSize = getBoxSize(topBox);
+  const bottomSize = getBoxSize(bottomBox);
 
   const topFontSize = chooseTextSizeForBox(label.line1, topSize.width, topSize.height);
   const bottomFontSize = chooseTextSizeForBox(label.line2, bottomSize.width, bottomSize.height);
@@ -192,16 +214,16 @@ function buildTextMeshes(label: LabelInput): Mesh[] {
   const line1Mesh = createTextLineMesh(
     label.line1,
     topFontSize,
-    BASE_X + TEXT_TOP_BOX.x1,
-    BASE_Y + TEXT_TOP_BOX.y1,
+    topBox.x1,
+    topBox.y1,
     topSize.width,
     topSize.height
   );
   const line2Mesh = createTextLineMesh(
     label.line2,
     bottomFontSize,
-    BASE_X + TEXT_BOTTOM_BOX.x1,
-    BASE_Y + TEXT_BOTTOM_BOX.y1,
+    bottomBox.x1,
+    bottomBox.y1,
     bottomSize.width,
     bottomSize.height
   );
@@ -229,6 +251,8 @@ export function generateLabelStl(label: LabelInput): Buffer {
   for (const textMesh of buildTextMeshes(label)) {
     root.add(textMesh);
   }
+
+  root.updateMatrixWorld(true);
 
   const result = exporter.parse(root, { binary: true });
   if (result instanceof DataView) {

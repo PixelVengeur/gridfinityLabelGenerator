@@ -1,5 +1,21 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LabelCategory, PredefinedLabel } from "../types/label";
+import txSvg from "../assets/tx.svg?raw";
+import screwLowHeadSvg from "../assets/screw_lowHead.svg?raw";
+
+// Fixed M3x10 Screw used as the live preview fixture for the predefined panel
+const M3_PREVIEW_BASE: PredefinedLabel = {
+  id: "preview-m3x10",
+  title: "M3x10 Screw",
+  line1: "M3x10",
+  line2: "Screw",
+  iconSvg: txSvg,
+  line2Svg: screwLowHeadSvg,
+  category: "fasteners",
+  size: "M3",
+  icon: "tx.svg",
+  wrenchSize: "TX10",
+};
 
 const CATEGORY_LABELS: Record<LabelCategory, string> = {
   fasteners: "Fasteners",
@@ -30,14 +46,34 @@ function IndeterminateCheckbox({
 interface PredefinedSelectorProps {
   labels: PredefinedLabel[];
   onGenerate: (selected: PredefinedLabel[]) => Promise<void>;
+  onPreviewChange?: (label: PredefinedLabel) => void;
 }
 
-export function PredefinedSelector({ labels, onGenerate }: PredefinedSelectorProps) {
+export function PredefinedSelector({ labels, onGenerate, onPreviewChange }: PredefinedSelectorProps) {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
   const [useWrenchSize, setUseWrenchSize] = useState(false);
   const [useImageLine2, setUseImageLine2] = useState(false);
+
+  // Fire preview with M3 fixture only when the user actually changes a checkbox option
+  // (skip the initial mount so the custom-form preview wins on page load)
+  const isFirstMount = useRef(true);
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    if (!onPreviewChange) return;
+    let preview: PredefinedLabel = { ...M3_PREVIEW_BASE };
+    if (useWrenchSize && preview.wrenchSize) {
+      preview = { ...preview, iconText: preview.wrenchSize, iconSvg: "" };
+    }
+    if (!useImageLine2) {
+      preview = { ...preview, line2Svg: undefined };
+    }
+    onPreviewChange(preview);
+  }, [useWrenchSize, useImageLine2, onPreviewChange]);
 
   const anyHasWrenchSize = useMemo(() => labels.some((l) => l.wrenchSize), [labels]);
   const anyHasLine2Svg = useMemo(() => labels.some((l) => l.line2Svg), [labels]);
@@ -102,6 +138,20 @@ export function PredefinedSelector({ labels, onGenerate }: PredefinedSelectorPro
     setExpanded((cur) => ({ ...cur, [key]: !cur[key] }));
   }
 
+  const handleFocusEnter = (e: React.FocusEvent<HTMLElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      if (!onPreviewChange) return;
+      let preview: PredefinedLabel = { ...M3_PREVIEW_BASE };
+      if (useWrenchSize && preview.wrenchSize) {
+        preview = { ...preview, iconText: preview.wrenchSize, iconSvg: "" };
+      }
+      if (!useImageLine2) {
+        preview = { ...preview, line2Svg: undefined };
+      }
+      onPreviewChange(preview);
+    }
+  };
+
   const runGenerate = async () => {
     if (selectedItems.length === 0) return;
     setLoading(true);
@@ -123,7 +173,7 @@ export function PredefinedSelector({ labels, onGenerate }: PredefinedSelectorPro
   };
 
   return (
-    <section className="panel">
+    <section className="panel" onFocus={handleFocusEnter}>
       <h2>Predefined labels</h2>
       <div className="tree">
         {Array.from(grouped.entries()).map(([category, sizeMap]) => {

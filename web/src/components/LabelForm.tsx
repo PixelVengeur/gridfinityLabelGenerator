@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { LabelInput } from "../types/label";
 import hexSvg from "../assets/hex.svg?raw";
 import insertSvg from "../assets/insert.svg?raw";
@@ -24,13 +24,30 @@ const CLIPARTS = [
 
 interface LabelFormProps {
   onGenerate: (input: LabelInput) => Promise<void>;
+  onPreviewChange?: (label: LabelInput) => void;
 }
 
-export function LabelForm({ onGenerate }: LabelFormProps) {
+export function LabelForm({ onGenerate, onPreviewChange }: LabelFormProps) {
   const [line1, setLine1] = useState("M3x10");
   const [line2, setLine2] = useState("Socket");
   const [selectedClipart, setSelectedClipart] = useState<string | null>("tx");
   const [loading, setLoading] = useState(false);
+
+  // Emit preview on every change, and once on mount
+  useEffect(() => {
+    if (!onPreviewChange) return;
+    const iconSvg = CLIPARTS.find((c) => c.id === selectedClipart)?.svg ?? "";
+    const title = [line1, line2].filter(Boolean).join(" ");
+    onPreviewChange({ title, line1, line2, iconSvg });
+  }, [line1, line2, selectedClipart, onPreviewChange]);
+
+  const handleFocusEnter = (e: React.FocusEvent<HTMLFormElement>) => {
+    if (onPreviewChange && !e.currentTarget.contains(e.relatedTarget as Node)) {
+      const iconSvg = CLIPARTS.find((c) => c.id === selectedClipart)?.svg ?? "";
+      const title = [line1, line2].filter(Boolean).join(" ");
+      onPreviewChange({ title, line1, line2, iconSvg });
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -46,7 +63,7 @@ export function LabelForm({ onGenerate }: LabelFormProps) {
   };
 
   return (
-    <form className="panel" onSubmit={handleSubmit}>
+    <form className="panel" onSubmit={handleSubmit} onFocus={handleFocusEnter}>
       <h2>Custom label</h2>
       <label>
         Text line 1
@@ -64,7 +81,7 @@ export function LabelForm({ onGenerate }: LabelFormProps) {
               key={c.id}
               type="button"
               className={`symbol-item${selectedClipart === c.id ? " selected" : ""}`}
-              onClick={() => setSelectedClipart(selectedClipart === c.id ? null : c.id)}
+              onClick={() => setSelectedClipart((prev) => (prev === c.id ? null : c.id))}
               title={c.label}
             >
               <img

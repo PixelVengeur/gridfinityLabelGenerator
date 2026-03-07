@@ -19,6 +19,24 @@ header {
   margin-bottom: 20px;
 }
 
+.header-banner {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  object-fit: cover;
+}
+
+.preview-panel {
+  margin-bottom: 16px;
+}
+
+.preview-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(280px, 1fr));
@@ -33,6 +51,12 @@ header {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.panel:not(.preview-panel):focus-within {
+  background: #1a2f4a;
+  border-color: #3b6090;
 }
 
 label {

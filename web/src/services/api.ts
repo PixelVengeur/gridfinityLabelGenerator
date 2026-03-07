@@ -2,6 +2,9 @@ import { zipSync } from "fflate";
 import txSvg from "../assets/tx.svg?raw";
 import washerSvg from "../assets/washer_sml.svg?raw";
 import screwLowHeadSvg from "../assets/screw_lowHead.svg?raw";
+import insertSvg from "../assets/insert.svg?raw";
+import nutSvg from "../assets/nut.svg?raw";
+import nylockSvg from "../assets/nylock.svg?raw";
 import type { LabelInput, PredefinedLabel } from "../types/label";
 import { generateLabelStl } from "./labelGenerator";
 
@@ -9,6 +12,9 @@ const ICON_MAP: Record<string, string> = {
   "tx.svg": txSvg,
   "washer_sml.svg": washerSvg,
   "screw_lowHead.svg": screwLowHeadSvg,
+  "insert.svg": insertSvg,
+  "nut.svg": nutSvg,
+  "nylock.svg": nylockSvg,
 };
 
 // Maps line2 text values to an SVG image used when "Use image for line 2" is enabled.
@@ -32,7 +38,7 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m5x5p8-heat-insert",       title: "M5x5.8 Insert",        line1: "M5x5.8",       line2: "Insert", icon: "insert.svg", category: "inserts", size: "M5" },
 { id: "m5x9p5-heat-insert",       title: "M5x9.5 Insert",        line1: "M5x9.5",       line2: "Insert", icon: "insert.svg", category: "inserts", size: "M5" },
 
-{ id: "m6x12p7-heat-insert",      title: "M6x12.7 Insert",       line1: "M6x12.7",      line2: "Insert", icon: "insert.svg", category: "inserts", size: "M6" },
+{ id: "M3x12p7-heat-insert",      title: "M3x12.7 Insert",       line1: "M3x12.7",      line2: "Insert", icon: "insert.svg", category: "inserts", size: "M3" },
 { id: "m8x12p7-heat-insert",      title: "M8x12.7 Insert",       line1: "M8x12.7",      line2: "Insert", icon: "insert.svg", category: "inserts", size: "M8" },
 { id: "m10x12p7-heat-insert",     title: "M10x12.7 Insert",      line1: "M10x12.7",     line2: "Insert", icon: "insert.svg", category: "inserts", size: "M10" },
 
@@ -71,6 +77,10 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m2x12-socket",  title: "M2x12 Screw",  line1: "M2x12",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2", wrenchSize: "TX6" },
 { id: "m2x16-socket",  title: "M2x16 Screw",  line1: "M2x16",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2", wrenchSize: "TX6" },
 { id: "m2x20-socket",  title: "M2x20 Screw",  line1: "M2x20",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2", wrenchSize: "TX6" },
+  { id: "m2-hex-nut",     title: "M2 Hex Nut",     line1: "M2", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M2" },
+  { id: "m2-nylock-nut",  title: "M2 Nylock Nut",  line1: "M2", line2: "Nylock Nut", icon: "nylock.svg", category: "fasteners", size: "M2" },
+  { id: "m2-washer",      title: "M2 Washer",      line1: "M2", line2: "Washer", icon: "washer_sml.svg", category: "fasteners", size: "M2" },
+  { id: "m2-large-washer", title: "M2 Large Washer", line1: "M2", line2: "Large Washer", icon: "washer_sml.svg", category: "fasteners", size: "M2" },
 
 // M2.5
 { id: "m2p5x4-socket",   title: "M2.5x4 Screw",   line1: "M2.5x4",   line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2.5", wrenchSize: "TX8" },
@@ -80,6 +90,10 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m2p5x18-socket",  title: "M2.5x18 Screw",  line1: "M2.5x18",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2.5", wrenchSize: "TX8" },
 { id: "m2p5x25-socket",  title: "M2.5x25 Screw",  line1: "M2.5x25",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2.5", wrenchSize: "TX8" },
 { id: "m2p5x30-socket",  title: "M2.5x30 Screw",  line1: "M2.5x30",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M2.5", wrenchSize: "TX8" },
+  { id: "m2p5-hex-nut",     title: "M2.5 Hex Nut",     line1: "M2.5", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M2.5" },
+  { id: "m2p5-nylock-nut",  title: "M2.5 Nylock Nut",  line1: "M2.5", line2: "Nylock Nut", icon: "nylock.svg", category: "fasteners", size: "M2.5" },
+  { id: "m2p5-washer",      title: "M2.5 Washer",      line1: "M2.5", line2: "Washer", icon: "washer_sml.svg", category: "fasteners", size: "M2.5" },
+  { id: "m2p5-large-washer", title: "M2.5 Large Washer", line1: "M2.5", line2: "Large Washer", icon: "washer_sml.svg", category: "fasteners", size: "M2.5" },
 
 // M3
 { id: "m3x4-socket",   title: "M3x4 Screw",   line1: "M3x4",   line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M3", wrenchSize: "TX10" },
@@ -96,6 +110,10 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m3x35-socket",  title: "M3x35 Screw",  line1: "M3x35",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M3", wrenchSize: "TX10" },
 { id: "m3x40-socket",  title: "M3x40 Screw",  line1: "M3x40",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M3", wrenchSize: "TX10" },
 { id: "m3x45-socket",  title: "M3x45 Screw",  line1: "M3x45",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M3", wrenchSize: "TX10" },
+  { id: "m3-hex-nut",     title: "M3 Hex Nut",     line1: "M3", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M3" },
+  { id: "m3-nylock-nut",  title: "M3 Nylock Nut",  line1: "M3", line2: "Nylock Nut", icon: "nylock.svg", category: "fasteners", size: "M3" },
+  { id: "m3-washer",      title: "M3 Washer",      line1: "M3", line2: "Washer", icon: "washer_sml.svg", category: "fasteners", size: "M3" },
+  { id: "m3-large-washer", title: "M3 Large Washer", line1: "M3", line2: "Large Washer", icon: "washer_sml.svg", category: "fasteners", size: "M3" },
 
 // M4
 { id: "m4x5-socket",   title: "M4x5 Screw",   line1: "M4x5",   line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M4", wrenchSize: "TX20" },
@@ -109,6 +127,10 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m4x35-socket",  title: "M4x35 Screw",  line1: "M4x35",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M4", wrenchSize: "TX20" },
 { id: "m4x40-socket",  title: "M4x40 Screw",  line1: "M4x40",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M4", wrenchSize: "TX20" },
 { id: "m4x50-socket",  title: "M4x50 Screw",  line1: "M4x50",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M4", wrenchSize: "TX20" },
+  { id: "m4-hex-nut",     title: "M4 Hex Nut",     line1: "M4", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M4" },
+  { id: "m4-nylock-nut",  title: "M4 Nylock Nut",  line1: "M4", line2: "Nylock Nut", icon: "nylock.svg", category: "fasteners", size: "M4" },
+  { id: "m4-washer",      title: "M4 Washer",      line1: "M4", line2: "Washer", icon: "washer_sml.svg", category: "fasteners", size: "M4" },
+  { id: "m4-large-washer", title: "M4 Large Washer", line1: "M4", line2: "Large Washer", icon: "washer_sml.svg", category: "fasteners", size: "M4" },
 
 // M5
 { id: "m5x6-socket",   title: "M5x6 Screw",   line1: "M5x6",   line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M5", wrenchSize: "TX25" },
@@ -119,6 +141,10 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
 { id: "m5x35-socket",  title: "M5x35 Screw",  line1: "M5x35",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M5", wrenchSize: "TX25" },
 { id: "m5x40-socket",  title: "M5x40 Screw",  line1: "M5x40",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M5", wrenchSize: "TX25" },
 { id: "m5x45-socket",  title: "M5x45 Screw",  line1: "M5x45",  line2: "Screw", icon: "tx.svg", category: "fasteners", size: "M5", wrenchSize: "TX25" },
+  { id: "m5-hex-nut",     title: "M5 Hex Nut",     line1: "M5", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M5" },
+  { id: "m5-nylock-nut",  title: "M5 Nylock Nut",  line1: "M5", line2: "Nylock Nut", icon: "nylock.svg", category: "fasteners", size: "M5" },
+  { id: "m5-washer",      title: "M5 Washer",      line1: "M5", line2: "Washer", icon: "washer_sml.svg", category: "fasteners", size: "M5" },
+  { id: "m5-large-washer", title: "M5 Large Washer", line1: "M5", line2: "Large Washer", icon: "washer_sml.svg", category: "fasteners", size: "M5" },
 
   // M6
   { id: "m6-hex-nut",     title: "M6 Hex Nut",     line1: "M6", line2: "Hex Nut", icon: "nut.svg", category: "fasteners", size: "M6" },

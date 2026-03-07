@@ -54,11 +54,11 @@ export function App() {
 
   return (
     <main className="app">
-      <a href="https://cnckitchen.store/" target="_blank" rel="noopener noreferrer">
+      <a href="https://geni.us/CNCStoreLabelGen" target="_blank" rel="noopener noreferrer">
         <img src={`${import.meta.env.BASE_URL}header.jpg`} alt="CNC Kitchen" className="header-banner" />
       </a>
       <header>
-        <h1>Gridfinity Label Generator</h1>
+        <h1>Printable Label Generator for Gridfinity Bins</h1>
       </header>
 
       {loading ? <p>Loading predefined labels...</p> : null}

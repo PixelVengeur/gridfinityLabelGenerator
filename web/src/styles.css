@@ -198,6 +198,17 @@ button:disabled {
   font-variant-numeric: tabular-nums;
 }
 
+.store-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(226, 232, 240, 0.3);
+  text-underline-offset: 4px;
+}
+
+.store-link:hover {
+  text-decoration-color: rgba(226, 232, 240, 0.65);
+}
+
 .error {
   color: #fca5a5;
 }

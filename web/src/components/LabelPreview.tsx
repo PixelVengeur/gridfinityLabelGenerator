@@ -57,15 +57,15 @@ export function LabelPreview({ label }: LabelPreviewProps) {
         {/* Left mounting pin */}
         <path
           d="m -128.69291,1142.3244 a 2.834646,2.834646 0 0 0 -5.66929,0 2.834646,2.834646 0 0 0 5.66929,0 z"
-          fill="#374151"
-          stroke="#64748b"
+          fill="none"
+          stroke="#475569"
           strokeWidth="1.89"
         />
         {/* Right mounting pin */}
         <path
           d="m 2.834646,1142.3244 a 2.834646,2.834646 0 0 0 -5.669292,0 2.834646,2.834646 0 0 0 5.669292,0 z"
-          fill="#374151"
-          stroke="#64748b"
+          fill="none"
+          stroke="#475569"
           strokeWidth="1.89"
         />
       </g>

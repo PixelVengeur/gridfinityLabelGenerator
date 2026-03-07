@@ -29,7 +29,7 @@ interface LabelFormProps {
 
 export function LabelForm({ onGenerate, onPreviewChange }: LabelFormProps) {
   const [line1, setLine1] = useState("M3x10");
-  const [line2, setLine2] = useState("Socket");
+  const [line2, setLine2] = useState("Screw");
   const [selectedClipart, setSelectedClipart] = useState<string | null>("tx");
   const [loading, setLoading] = useState(false);
 
@@ -64,13 +64,13 @@ export function LabelForm({ onGenerate, onPreviewChange }: LabelFormProps) {
 
   return (
     <form className="panel" onSubmit={handleSubmit} onFocus={handleFocusEnter}>
-      <h2>Custom label</h2>
+      <h2>Create Your Own Label</h2>
       <label>
-        Text line 1
+        Line 1
         <input value={line1} onChange={(e) => setLine1(e.target.value)} required />
       </label>
       <label>
-        Text line 2
+        Line 2
         <input value={line2} onChange={(e) => setLine2(e.target.value)} />
       </label>
       <div className="symbol-section">

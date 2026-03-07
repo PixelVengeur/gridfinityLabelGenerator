@@ -78,14 +78,23 @@ export function PredefinedSelector({ labels, onGenerate, onPreviewChange }: Pred
   const anyHasWrenchSize = useMemo(() => labels.some((l) => l.wrenchSize), [labels]);
   const anyHasLine2Svg = useMemo(() => labels.some((l) => l.line2Svg), [labels]);
 
-  // Build 2-level grouping: category → size → items
+  // Build 2-level grouping: category → size/group → items
+  // For inserts, collapse M2/M3/etc. into "Metric Inserts" / "Imperial Inserts"
+  function getSizeKey(label: PredefinedLabel): string {
+    if (label.category === "inserts") {
+      return label.size.startsWith("M") ? "Metric Inserts" : "Imperial Inserts";
+    }
+    return label.size;
+  }
+
   const grouped = useMemo(() => {
     const map = new Map<LabelCategory, Map<string, PredefinedLabel[]>>();
     for (const label of labels) {
       if (!map.has(label.category)) map.set(label.category, new Map());
       const sizeMap = map.get(label.category)!;
-      if (!sizeMap.has(label.size)) sizeMap.set(label.size, []);
-      sizeMap.get(label.size)!.push(label);
+      const key = getSizeKey(label);
+      if (!sizeMap.has(key)) sizeMap.set(key, []);
+      sizeMap.get(key)!.push(label);
     }
     return map;
   }, [labels]);
@@ -174,7 +183,7 @@ export function PredefinedSelector({ labels, onGenerate, onPreviewChange }: Pred
 
   return (
     <section className="panel" onFocus={handleFocusEnter}>
-      <h2>Predefined labels</h2>
+      <h2><a href="https://geni.us/CNCStoreLabelGen" target="_blank" rel="noopener noreferrer" className="store-link">CNCKitchen.STORE Labels</a></h2>
       <div className="tree">
         {Array.from(grouped.entries()).map(([category, sizeMap]) => {
           const catIds = idsForCategory(category);

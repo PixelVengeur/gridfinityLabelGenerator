@@ -34,8 +34,6 @@ export function App() {
     run();
   }, []);
 
-  const defaultSvg = labels[0]?.iconSvg ?? "";
-
   const handleCustom = async (input: LabelInput) => {
     setError("");
     const blob = await downloadSingle(input);
@@ -66,7 +64,7 @@ export function App() {
       {error ? <p className="error">{error}</p> : null}
 
       <div className="layout">
-        <LabelForm defaultSvg={defaultSvg} onGenerate={handleCustom} />
+        <LabelForm onGenerate={handleCustom} />
         <PredefinedSelector labels={labels} onGenerate={handleBatch} />
       </div>
     </main>

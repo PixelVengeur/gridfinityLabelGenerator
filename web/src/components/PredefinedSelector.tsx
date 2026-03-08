@@ -13,7 +13,7 @@ const M3_PREVIEW_BASE: PredefinedLabel = {
   line2Svg: screwLowHeadSvg,
   category: "fasteners",
   size: "M3",
-  icon: "tx.svg",
+  icon: "tx",
   wrenchSize: "TX10",
 };
 
@@ -257,6 +257,7 @@ export function PredefinedSelector({ labels, onGenerate, onPreviewChange }: Pred
           );
         })}
       </div>
+      <span className="options-heading">Export Settings</span>
       {anyHasWrenchSize && (
         <label className="list-item">
           <input

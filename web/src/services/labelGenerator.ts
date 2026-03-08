@@ -67,6 +67,7 @@ function toExtrudedMesh(shapes: Shape[], depth: number): Mesh {
     bevelEnabled: false,
     curveSegments: 10,
   });
+  geometry.computeVertexNormals();
   return new Mesh(geometry, material);
 }
 
@@ -117,7 +118,12 @@ function buildSvgMeshInBox(svgString: string, box: Rect): Mesh | null {
   const targetSize = getBoxSize(target);
   const scale = Math.min(targetSize.width / sourceWidth, targetSize.height / sourceHeight);
 
-  extruded.scale.set(scale, scale, 1);
+  // SVG assets use screen coordinates where Y grows downward. Rotate the
+  // geometry around X instead of using a negative scale so triangle winding
+  // stays outward-facing in the exported STL.
+  extruded.geometry.rotateX(Math.PI);
+  extruded.geometry.scale(scale, scale, 1);
+  extruded.geometry.computeVertexNormals();
 
   const scaledBounds = getMeshBounds(extruded);
   const scaledWidth = scaledBounds.max.x - scaledBounds.min.x;
@@ -125,7 +131,7 @@ function buildSvgMeshInBox(svgString: string, box: Rect): Mesh | null {
   const tx = target.x1 + (targetSize.width - scaledWidth) / 2 - scaledBounds.min.x;
   const ty = target.y1 + (targetSize.height - scaledHeight) / 2 - scaledBounds.min.y;
 
-  extruded.position.set(tx, ty, topZ - 0.4);
+  extruded.position.set(tx, ty, topZ);
   return extruded;
 }
 

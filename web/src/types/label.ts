@@ -9,9 +9,10 @@ export interface LabelInput {
 }
 
 export type LabelCategory = "fasteners" | "inserts";
+export type IconKey = "tx" | "washer" | "screwLowHead" | "insert" | "nut" | "nylock";
 
 export interface PredefinedLabel extends LabelInput {
-  icon: string;
+  icon: IconKey;
   category: LabelCategory;
   size: string;
   wrenchSize?: string;

@@ -69,7 +69,7 @@ export function App() {
         <img src={`${import.meta.env.BASE_URL}header.jpg`} alt="CNC Kitchen" className="header-banner" />
       </a>
       <header>
-        <h1>Printable Label Generator for Gridfinity Bins</h1>
+        <h1>Gridfinity Label Generator</h1>
       </header>
 
       {loading ? <p>Loading predefined labels...</p> : null}

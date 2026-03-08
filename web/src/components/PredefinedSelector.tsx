@@ -184,6 +184,7 @@ export function PredefinedSelector({ labels, onGenerate, onPreviewChange }: Pred
   return (
     <section className="panel" onFocus={handleFocusEnter}>
       <h2><a href="https://geni.us/CNCStoreLabelGen" target="_blank" rel="noopener noreferrer" className="store-link">CNCKitchen.STORE Labels</a></h2>
+      <p className="panel-subtitle">Pre-defined labels for CNC Kitchen Fasteners &amp; Inserts</p>
       <div className="tree">
         {Array.from(grouped.entries()).map(([category, sizeMap]) => {
           const catIds = idsForCategory(category);

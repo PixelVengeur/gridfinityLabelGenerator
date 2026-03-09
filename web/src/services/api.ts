@@ -2,6 +2,7 @@ import { zipSync } from "fflate";
 import txSvg from "../assets/tx.svg?raw";
 import washerSvg from "../assets/washer_sml.svg?raw";
 import screwLowHeadSvg from "../assets/screw_lowHead.svg?raw";
+import trpLowHeadSvg from "../assets/TRP_lowHeadScrew.svg?raw";
 import insertSvg from "../assets/insert.svg?raw";
 import nutSvg from "../assets/nut.svg?raw";
 import nylockSvg from "../assets/nylock.svg?raw";
@@ -17,10 +18,14 @@ const ICON_SVGS: Record<IconKey, string> = {
   nylock: nylockSvg,
 };
 
-// Maps line2 text values to an SVG image used when "Use image for line 2" is enabled.
-// Only "Screw" is mapped for now; all other line2 values fall back to text.
+// Maps line2 text values to a TRP screw-profile SVG for the "Use image for line 2" option.
 const LINE2_SVG_MAP: Record<string, string> = {
-  Screw: screwLowHeadSvg,
+  Screw: trpLowHeadSvg,
+};
+
+// Matching viewBox crops for each entry in LINE2_SVG_MAP (A4-canvas SVGs).
+const LINE2_VIEWBOX_MAP: Record<string, string> = {
+  Screw: "28 1042 93 32",
 };
 
 const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
@@ -168,6 +173,7 @@ export async function fetchPredefined(): Promise<PredefinedLabel[]> {
     ...p,
     iconSvg: ICON_SVGS[p.icon],
     line2Svg: LINE2_SVG_MAP[p.line2],
+    line2ViewBox: LINE2_VIEWBOX_MAP[p.line2],
   }));
 }
 

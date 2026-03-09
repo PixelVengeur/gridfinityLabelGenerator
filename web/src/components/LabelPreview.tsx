@@ -141,8 +141,9 @@ export function LabelPreview({ label }: LabelPreviewProps) {
     if (!label) return null;
 
     if (label.line2Svg) {
-      // Use a nested <svg> with a viewBox cropped to the actual screw content area.
-      // The raw screw SVG has an A4-sized canvas; SCREW_SVG_VIEWBOX isolates the drawing.
+      // Use a nested <svg> with a viewBox cropped to the actual content area.
+      // label.line2ViewBox overrides the default SCREW_SVG_VIEWBOX for TRP images.
+      const vb = label.line2ViewBox ?? SCREW_SVG_VIEWBOX;
       const encoded = encodeURIComponent(label.line2Svg);
       return (
         <svg
@@ -150,7 +151,7 @@ export function LabelPreview({ label }: LabelPreviewProps) {
           y={LINE2_BOX.y}
           width={LINE2_BOX.w}
           height={LINE2_BOX.h}
-          viewBox={SCREW_SVG_VIEWBOX}
+          viewBox={vb}
           preserveAspectRatio="xMidYMid meet"
         >
           <image

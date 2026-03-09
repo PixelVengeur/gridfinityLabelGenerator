@@ -5,7 +5,8 @@ export interface LabelInput {
   line2: string;
   iconSvg: string;
   iconText?: string;
-  line2Svg?: string; // SVG to render in the line-2 box instead of text
+  line2Svg?: string;    // SVG to render in the line-2 box instead of text
+  line2ViewBox?: string; // viewBox crop for line2Svg (A4-canvas SVGs need cropping)
 }
 
 export type LabelCategory = "fasteners" | "inserts";

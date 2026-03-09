@@ -230,6 +230,55 @@ button:disabled {
   color: #fca5a5;
 }
 
+/* Line 2 field (label row + mode toggle + input/picker) */
+
+.line2-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.line2-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mode-toggle {
+  display: flex;
+  border: 2px solid #334155;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mode-toggle button {
+  margin: 0;
+  padding: 3px 10px;
+  background: #0f172a;
+  border: none;
+  border-radius: 0;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.mode-toggle button + button {
+  border-left: 2px solid #334155;
+}
+
+.mode-toggle button:hover:not(.active) {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.mode-toggle button.active {
+  background: #14532d;
+  color: #86efac;
+}
+
 /* Symbol picker */
 
 .symbol-section {

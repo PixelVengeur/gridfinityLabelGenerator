@@ -1,6 +1,7 @@
 import { zipSync } from "fflate";
 import txSvg from "../assets/torx.svg?raw";
 import washerSvg from "../assets/washer.svg?raw";
+import washerLargeSvg from "../assets/washer_large.svg?raw";
 import screwLowHeadSvg from "../assets/screw_lowHead.svg?raw";
 import trpLowHeadSvg from "../assets/TRP_lowHeadScrew.svg?raw";
 import insertSvg from "../assets/insert.svg?raw";
@@ -12,6 +13,7 @@ import { generateLabelStl } from "./labelGenerator";
 const ICON_SVGS: Record<IconKey, string> = {
   tx: txSvg,
   washer: washerSvg,
+  washer_large: washerLargeSvg,
   screwLowHead: screwLowHeadSvg,
   insert: insertSvg,
   nut: nutSvg,
@@ -20,7 +22,8 @@ const ICON_SVGS: Record<IconKey, string> = {
 
 const ICON_VIEWBOXES: Partial<Record<IconKey, string>> = {
   tx:      "541 127 112 112",
-  washer:  "38 280 112 112",
+  washer:       "38 280 112 112",
+  washer_large:  "48 421 112 112",
   insert:  "537 346 75 98",
   nut:     "307 549 137 120",
   nylock:  "477 549 137 120",
@@ -93,7 +96,7 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
   { id: "m2-hex-nut",     title: "M2 Hex Nut",     line1: "M2", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M2" },
   { id: "m2-nylock-nut",  title: "M2 Nylock Nut",  line1: "M2", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M2" },
   { id: "m2-washer",      title: "M2 Washer",      line1: "M2", line2: "Washer", icon: "washer", category: "fasteners", size: "M2" },
-  { id: "m2-large-washer", title: "M2 Large Washer", line1: "M2", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M2" },
+  { id: "m2-large-washer", title: "M2 Large Washer", line1: "M2", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M2" },
 
 // M2.5
 { id: "m2p5x4-socket",   title: "M2.5x4 Screw",   line1: "M2.5x4",   line2: "Screw", icon: "tx", category: "fasteners", size: "M2.5", wrenchSize: "TX8" },
@@ -106,7 +109,7 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
   { id: "m2p5-hex-nut",     title: "M2.5 Hex Nut",     line1: "M2.5", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M2.5" },
   { id: "m2p5-nylock-nut",  title: "M2.5 Nylock Nut",  line1: "M2.5", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M2.5" },
   { id: "m2p5-washer",      title: "M2.5 Washer",      line1: "M2.5", line2: "Washer", icon: "washer", category: "fasteners", size: "M2.5" },
-  { id: "m2p5-large-washer", title: "M2.5 Large Washer", line1: "M2.5", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M2.5" },
+  { id: "m2p5-large-washer", title: "M2.5 Large Washer", line1: "M2.5", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M2.5" },
 
 // M3
 { id: "m3x4-socket",   title: "M3x4 Screw",   line1: "M3x4",   line2: "Screw", icon: "tx", category: "fasteners", size: "M3", wrenchSize: "TX10" },
@@ -126,7 +129,7 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
   { id: "m3-hex-nut",     title: "M3 Hex Nut",     line1: "M3", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M3" },
   { id: "m3-nylock-nut",  title: "M3 Nylock Nut",  line1: "M3", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M3" },
   { id: "m3-washer",      title: "M3 Washer",      line1: "M3", line2: "Washer", icon: "washer", category: "fasteners", size: "M3" },
-  { id: "m3-large-washer", title: "M3 Large Washer", line1: "M3", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M3" },
+  { id: "m3-large-washer", title: "M3 Large Washer", line1: "M3", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M3" },
 
 // M4
 { id: "m4x5-socket",   title: "M4x5 Screw",   line1: "M4x5",   line2: "Screw", icon: "tx", category: "fasteners", size: "M4", wrenchSize: "TX20" },
@@ -143,7 +146,7 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
   { id: "m4-hex-nut",     title: "M4 Hex Nut",     line1: "M4", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M4" },
   { id: "m4-nylock-nut",  title: "M4 Nylock Nut",  line1: "M4", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M4" },
   { id: "m4-washer",      title: "M4 Washer",      line1: "M4", line2: "Washer", icon: "washer", category: "fasteners", size: "M4" },
-  { id: "m4-large-washer", title: "M4 Large Washer", line1: "M4", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M4" },
+  { id: "m4-large-washer", title: "M4 Large Washer", line1: "M4", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M4" },
 
 // M5
 { id: "m5x6-socket",   title: "M5x6 Screw",   line1: "M5x6",   line2: "Screw", icon: "tx", category: "fasteners", size: "M5", wrenchSize: "TX25" },
@@ -157,19 +160,19 @@ const PREDEFINED_DATA: Array<Omit<PredefinedLabel, "iconSvg">> = [
   { id: "m5-hex-nut",     title: "M5 Hex Nut",     line1: "M5", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M5" },
   { id: "m5-nylock-nut",  title: "M5 Nylock Nut",  line1: "M5", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M5" },
   { id: "m5-washer",      title: "M5 Washer",      line1: "M5", line2: "Washer", icon: "washer", category: "fasteners", size: "M5" },
-  { id: "m5-large-washer", title: "M5 Large Washer", line1: "M5", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M5" },
+  { id: "m5-large-washer", title: "M5 Large Washer", line1: "M5", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M5" },
 
   // M6
   { id: "m6-hex-nut",     title: "M6 Hex Nut",     line1: "M6", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M6" },
   { id: "m6-nylock-nut",  title: "M6 Nylock Nut",  line1: "M6", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M6" },
   { id: "m6-washer",      title: "M6 Washer",      line1: "M6", line2: "Washer", icon: "washer", category: "fasteners", size: "M6" },
-  { id: "m6-large-washer", title: "M6 Large Washer", line1: "M6", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M6" },
+  { id: "m6-large-washer", title: "M6 Large Washer", line1: "M6", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M6" },
 
   // M8
   { id: "m8-hex-nut",     title: "M8 Hex Nut",     line1: "M8", line2: "Hex Nut", icon: "nut", category: "fasteners", size: "M8" },
   { id: "m8-nylock-nut",  title: "M8 Nylock Nut",  line1: "M8", line2: "Nylock Nut", icon: "nylock", category: "fasteners", size: "M8" },
   { id: "m8-washer",      title: "M8 Washer",      line1: "M8", line2: "Washer", icon: "washer", category: "fasteners", size: "M8" },
-  { id: "m8-large-washer", title: "M8 Large Washer", line1: "M8", line2: "Large Washer", icon: "washer", category: "fasteners", size: "M8" },
+  { id: "m8-large-washer", title: "M8 Large Washer", line1: "M8", line2: "Large Washer", icon: "washer_large", category: "fasteners", size: "M8" },
 ];
 
 function slugify(value: string): string {

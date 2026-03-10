@@ -6,6 +6,7 @@ import {
   MeshNormalMaterial,
   Shape,
   ShapeGeometry,
+  ShapePath,
   type BufferGeometry,
 } from "three";
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
@@ -15,6 +16,12 @@ import { FontLoader, type Font } from "three/examples/jsm/loaders/FontLoader.js"
 import type { LabelInput } from "../types/label";
 
 const EMBOSS_HEIGHT = 0.4;
+
+// Tighter letter spacing: each glyph's horizontal advance is reduced by this
+// factor. Glyphs themselves are unchanged (no squishing), only the gaps between
+// them shrink. The smaller total width lets chooseTextSizeForBox pick a larger
+// font size, making strokes proportionally thicker — important for sliceability.
+const TRACKING = 0.9;
 
 const SVG_BOX = { x1: 1.5, y1: 0.5, x2: 11, y2: 10 };
 const TEXT_TOP_BOX = { x1: 12, y1: 5.75, x2: 33.3, y2: 10 };
@@ -64,6 +71,53 @@ function cloneBaseMesh(): Mesh<BufferGeometry> {
   return new Mesh(baseGeometry.clone(), material);
 }
 
+// Generates Three.js shapes for `text` at `size` with reduced letter spacing.
+// Replicates Three.js FontLoader's internal createPaths logic so we can apply
+// a custom tracking multiplier to each glyph's horizontal advance (ha).
+function generateShapesWithTracking(text: string, size: number): Shape[] {
+  const data = (font as any).data as {
+    resolution: number;
+    glyphs: Record<string, { ha: number; o?: string; _cachedOutline?: string[] }>;
+  };
+  const scale = size / data.resolution;
+  const shapes: Shape[] = [];
+  let offsetX = 0;
+
+  for (const char of text) {
+    const glyph = data.glyphs[char] ?? data.glyphs["?"];
+    if (!glyph) continue;
+
+    if (glyph.o) {
+      const path = new ShapePath();
+      const outline = glyph._cachedOutline ?? (glyph._cachedOutline = glyph.o.split(" "));
+      let i = 0;
+      while (i < outline.length) {
+        const action = outline[i++];
+        if (action === "m") {
+          path.moveTo(+outline[i++] * scale + offsetX, +outline[i++] * scale);
+        } else if (action === "l") {
+          path.lineTo(+outline[i++] * scale + offsetX, +outline[i++] * scale);
+        } else if (action === "q") {
+          // typeface.json order: end x/y then control x/y
+          const ex = +outline[i++] * scale + offsetX, ey = +outline[i++] * scale;
+          const cx = +outline[i++] * scale + offsetX, cy = +outline[i++] * scale;
+          path.quadraticCurveTo(cx, cy, ex, ey);
+        } else if (action === "b") {
+          const ex  = +outline[i++] * scale + offsetX, ey  = +outline[i++] * scale;
+          const c1x = +outline[i++] * scale + offsetX, c1y = +outline[i++] * scale;
+          const c2x = +outline[i++] * scale + offsetX, c2y = +outline[i++] * scale;
+          path.bezierCurveTo(c1x, c1y, c2x, c2y, ex, ey);
+        }
+      }
+      shapes.push(...path.toShapes(false));
+    }
+
+    offsetX += glyph.ha * scale * TRACKING;
+  }
+
+  return shapes;
+}
+
 function toExtrudedMesh(shapes: Shape[], depth: number): Mesh {
   const geometry = new ExtrudeGeometry(shapes, {
     depth,
@@ -77,7 +131,7 @@ function toExtrudedMesh(shapes: Shape[], depth: number): Mesh {
 function getTextBounds(text: string, size: number): Box3 | null {
   const trimmed = text.trim();
   if (!trimmed) return null;
-  const shapes = font.generateShapes(trimmed, size);
+  const shapes = generateShapesWithTracking(trimmed, size);
   if (shapes.length === 0) return null;
   const geometry = new ShapeGeometry(shapes);
   geometry.computeBoundingBox();
@@ -212,7 +266,7 @@ function createTextLineMesh(
 ): Mesh | null {
   const trimmed = text.trim();
   if (!trimmed) return null;
-  const shapes = font.generateShapes(trimmed, size);
+  const shapes = generateShapesWithTracking(trimmed, size);
   if (shapes.length === 0) return null;
 
   const geometry = new ExtrudeGeometry(shapes, {

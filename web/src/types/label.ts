@@ -12,7 +12,7 @@ export interface LabelInput {
 }
 
 export type LabelCategory = "fasteners" | "inserts";
-export type IconKey = "tx" | "washer" | "screwLowHead" | "insert" | "nut" | "nylock";
+export type IconKey = "tx" | "washer" | "washer_large" | "screwLowHead" | "insert" | "nut" | "nylock";
 
 export interface PredefinedLabel extends LabelInput {
   icon: IconKey;

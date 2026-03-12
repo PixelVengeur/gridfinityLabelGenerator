@@ -4,3 +4,5 @@ web/node_modules/
 server/dist/
 web/dist/
 web/tsconfig.tsbuildinfo
+archive/
+newassets/

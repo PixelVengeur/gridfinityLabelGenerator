@@ -91,7 +91,7 @@ export function App() {
           Open an issue on{" "}
           <a href="https://github.com/CNCKitchen/gridfinityLabelGenerator/issues" target="_blank" rel="noopener noreferrer">GitHub</a>{" "}
           or comment on{" "}
-          <a href="https://www.printables.com/@CNCKitchen/models" target="_blank" rel="noopener noreferrer">Printables</a>.
+          <a href="https://www.printables.com/model/1635048-gridfinity-label-generator-web-app" target="_blank" rel="noopener noreferrer">Printables</a>.
         </p>
       </div>
 

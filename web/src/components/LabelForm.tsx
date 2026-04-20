@@ -10,6 +10,9 @@ import slotSvg from "../assets/slot.svg?raw";
 import torxSvg from "../assets/torx.svg?raw";
 import washerSvg from "../assets/washer.svg?raw";
 import washerLargeSvg from "../assets/washer_large.svg?raw";
+import tNutSvg from "../assets/tnut.svg?raw";
+import rollInTNutSvg from "../assets/roll-in-tnut.svg?raw";
+
 import trpButtonHeadSvg from "../assets/TRP_ButtonHead.svg?raw";
 import trpCountersunkSvg from "../assets/TRP_countersunkHead.svg?raw";
 import trpCskSelfTapSvg from "../assets/TRP_countersunk_selfTapping.svg?raw";
@@ -32,6 +35,8 @@ const CLIPARTS = [
   { id: "torx",         label: "Torx",        svg: torxSvg,        viewBox: "541 127 112 112" },
   { id: "washer",       label: "Washer",      svg: washerSvg,      viewBox: "38 280 112 112" },
   { id: "washer_large", label: "Washer L",    svg: washerLargeSvg, viewBox: "48 421 112 112" },
+  { id: "t_nut",        label: "T-Nut",       svg: tNutSvg,        viewBox: "15 -35 80 120" },
+  { id: "roll-in_t_nut",label: "Roll Nut",    svg: rollInTNutSvg,  viewBox: "-10 -10 100 170" },
 ];
 
 // TRP screw-profile images for the line-2 box.

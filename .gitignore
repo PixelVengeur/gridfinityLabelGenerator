@@ -6,5 +6,3 @@ web/dist/
 web/tsconfig.tsbuildinfo
 archive/
 newassets/
-web/src/buildInfo.ts
-web/package-lock.json
